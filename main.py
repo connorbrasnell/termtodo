@@ -6,26 +6,17 @@ The main file used for the termtodo project.
 import argparse
 import json
 
-# Standard output file
-output_file = "json_data/todolist.json"
+def add_item(item, output_file):
 
-# Set up the argument parser
-parser = argparse.ArgumentParser(description='Command line arguments.')
-parser.add_argument('-o', dest='output', action='store_true', help='Output the to do list.')
-parser.add_argument('-a', dest='to_add', help='Add a todo item.')
-OPTIONS = parser.parse_args()
+    # Initalise to_do_list, used if the json file is empty
+    to_do_list = {}
 
-# Initalise to_do_list, used if the json file is empty
-to_do_list = {}
+    # Read from the json file, and set to_do_list to the items if the file is not empty
+    with open(output_file, 'r') as fd:
+        lines = fd.read()
+    if lines:
+        to_do_list = json.loads(lines)
 
-# Read from the json file, and set to_do_list to the items if the file is not empty
-read_from = open(output_file, 'r')
-lines = read_from.read()
-if lines:
-    to_do_list = json.loads(lines)
-read_from.close()
-
-def add_item(item):
     # Counter variable
     counter = 0
 
@@ -39,11 +30,37 @@ def add_item(item):
     write_to.write(json.dumps(to_do_list))
     write_to.close()
 
-def display_items():
+def display_items(output_file):
+
+    # Initalise to_do_list, used if the json file is empty
+    to_do_list = {}
+
+    # Read from the json file, and set to_do_list to the items if the file is not empty
+    read_from = open(output_file, 'r')
+    lines = read_from.read()
+    if lines:
+        to_do_list = json.loads(lines)
+    read_from.close()
+
     for item in to_do_list:
         print(str(item) + '\t' + str(to_do_list[item][0]))
 
-if OPTIONS.to_add:
-    add_item(OPTIONS.to_add)
-if OPTIONS.output:
-    display_items()
+    return '\n'.join(str(item) + '\t' + str(to_do_list[item][0]) for item in to_do_list)
+
+def main():
+    # Standard output file
+    output_file = "json_data/todolist.json"
+
+    # Set up the argument parser
+    parser = argparse.ArgumentParser(description='Command line arguments.')
+    parser.add_argument('-o', dest='output', action='store_true', help='Output the to do list.')
+    parser.add_argument('-a', dest='to_add', help='Add a todo item.')
+    OPTIONS = parser.parse_args()
+
+    if OPTIONS.to_add:
+        add_item(OPTIONS.to_add, output_file)
+    if OPTIONS.output:
+        display_items(output_file)
+
+if __name__ == "__main__":
+    main()
