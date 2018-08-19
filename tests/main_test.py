@@ -71,6 +71,38 @@ class TestMain(unittest.TestCase):
 
         self.assertEqual(output_items, initial_string)
 
+    def test_delete(self):
+        """ This function will test the deletion functionality."""
+
+        end = {
+            "0": ["zero"]
+        }
+
+        # Initalise to_do_list, used if the json file is empty
+        to_do_list = {}
+
+        # Read from the json file, and set to_do_list to the items if the file is not empty
+        with open(self.test_json, 'r') as fd:
+            lines = fd.read()
+        if lines:
+            to_do_list = json.loads(lines)
+
+        # Make sure the initial list is correct
+        self.assertEqual(cmp(to_do_list, self.initial), 0)
+
+        main.delete_item("1", self.test_json)
+
+        # Read from the json file, and set to_do_list to the items if the file is not empty
+        with open(self.test_json, 'r') as fd:
+            lines = fd.read()
+        if lines:
+            to_do_list = json.loads(lines)
+
+        # Make sure the resulting list is correct
+        self.assertEqual(cmp(to_do_list, end), 0)
+
+        self.reset_json_file()
+
         
 
 if __name__ == "__main__":

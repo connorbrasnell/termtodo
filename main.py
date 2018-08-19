@@ -30,6 +30,23 @@ def add_item(item, output_file):
     write_to.write(json.dumps(to_do_list))
     write_to.close()
 
+def delete_item(item_id, output_file):
+
+    # Initalise to_do_list, used if the json file is empty
+    to_do_list = {}
+
+    # Read from the json file, and set to_do_list to the items if the file is not empty
+    with open(output_file, 'r') as fd:
+        lines = fd.read()
+    if lines:
+        to_do_list = json.loads(lines)
+
+    del to_do_list[item_id]
+
+    write_to = open(output_file, 'w')
+    write_to.write(json.dumps(to_do_list))
+    write_to.close()
+
 def display_items(output_file):
 
     # Initalise to_do_list, used if the json file is empty
@@ -55,12 +72,15 @@ def main():
     parser = argparse.ArgumentParser(description='Command line arguments.')
     parser.add_argument('-o', dest='output', action='store_true', help='Output the to do list.')
     parser.add_argument('-a', dest='to_add', help='Add a todo item.')
+    parser.add_argument('-d', dest='to_delete', help='Delete a todo item.')
     OPTIONS = parser.parse_args()
 
     if OPTIONS.to_add:
         add_item(OPTIONS.to_add, output_file)
     if OPTIONS.output:
         display_items(output_file)
+    if OPTIONS.to_delete:
+        delete_item(OPTIONS.to_delete, output_file)
 
 if __name__ == "__main__":
     main()
